@@ -23,3 +23,4 @@
 /home/harrison/Programming/c-sharp-practice/WebApplication1/obj/Debug/net8.0/WebApplication1.pdb
 /home/harrison/Programming/c-sharp-practice/WebApplication1/obj/Debug/net8.0/WebApplication1.genruntimeconfig.cache
 /home/harrison/Programming/c-sharp-practice/WebApplication1/obj/Debug/net8.0/ref/WebApplication1.dll
+/home/harrison/Programming/c-sharp-practice/WebApplication1/obj/Debug/net8.0/WebApplication1.sourcelink.json
