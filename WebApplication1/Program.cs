@@ -118,6 +118,37 @@ class GlazerCalc
 
         // Fibonacci
         Console.WriteLine(Fibonacci(10));
+
+
+        // Ch. 18
+        // OOP Practice
+        Color red = new Color(5, 28, 254);
+        Console.WriteLine(red.GetGrayscale());
+        Ball redBall = new Ball(1, red);
+        Console.WriteLine($"Throws: {redBall.GetThrowCount()}");
+        Console.WriteLine($"Size: {redBall.size}");
+        redBall.Throw();
+        Console.WriteLine($"Throws: {redBall.GetThrowCount()}");
+        Console.WriteLine($"Size: {redBall.size}");
+        redBall.Throw();
+        redBall.Throw();
+        Console.WriteLine($"Throws: {redBall.GetThrowCount()}");
+        Console.WriteLine($"Size: {redBall.size}");
+        redBall.Pop();
+        Console.WriteLine($"Throws: {redBall.GetThrowCount()}");
+        Console.WriteLine($"Size: {redBall.size}");
+
+        // Quiz
+        // 1. Classes ARE reference types
+        // 2. CLASSES define what a particular type of thing can do and store, while an INSTANCE is a specific object that contains its own set of data.
+        // 3. 3 types of members that can be part of a class: Instance variables, methods, constructors
+        // 4. If something is static, it IS shared by all instances of a particular type.
+        // 5. A CONSTRUCTOR is a special type of method that sets up a new instance
+        // 6. PRIVATE: can only be accessed within the class
+        // 7. PUBLIC: can be accessed anywhere
+        // 8. INTERNAL: can be accessed within the same project only
+
+
         
     }
     static int[] GenerateNumbers(int n) {
@@ -157,5 +188,67 @@ class GlazerCalc
         }
 
         return Fibonacci(n - 1) + Fibonacci(n - 2);
+    }
+}
+public class Color {
+    private int red;
+    private int green;
+    private int blue;
+    private int alpha;
+
+    public Color(int red, int green, int blue, int alpha) {
+        this.red = red;
+        this.green = green;
+        this.blue = blue;
+        this.alpha = alpha;
+    }
+
+    public Color(int red, int green, int blue) {
+        this.red = red;
+        this.green = green;
+        this.blue = blue;
+        this.alpha = 255;
+    }
+
+    public int[] GetRGBA() {
+        int[] rgba = new int[4] {this.red, this.green, this.blue, this.alpha };
+        return rgba;
+    }
+
+    public void SetRed(int r) {
+        this.red = r;
+    }
+
+    public float GetGrayscale() {
+        return (float)(this.red + this.green + this.blue) / 3;
+    }
+}
+
+public class Ball {
+    public int size;
+    public Color color;
+    private int throwCount;
+
+    public Ball(int size, Color color) {
+        this.size = size;
+        this.color = color;
+        this.throwCount = 0;
+    }
+    public Ball(int size, Color color, int throwCount) {
+        this.size = size;
+        this.color = color;
+        this.throwCount = throwCount;
+    }
+
+    public void Pop() {
+        this.size = 0;
+    }
+
+    public void Throw() {
+        this.throwCount++;
+    }
+
+    public int GetThrowCount() {
+        return this.throwCount;
     }
 }
