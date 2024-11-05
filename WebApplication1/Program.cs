@@ -1,5 +1,6 @@
 using System;
 using System.Reflection.Metadata;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 class GlazerCalc
 {
@@ -148,6 +149,15 @@ class GlazerCalc
         // 7. PUBLIC: can be accessed anywhere
         // 8. INTERNAL: can be accessed within the same project only
 
+        // Ch. 20 Tic-Tac-Toe
+        Player playerX = new Player();
+        Player playerO = new Player();
+        Board board = new Board();
+        Renderer renderer = new Renderer();
+        renderer.Render(board);
+
+        Position pos = playerX.GetPosition(board);
+
 
         
     }
@@ -250,5 +260,75 @@ public class Ball {
 
     public int GetThrowCount() {
         return this.throwCount;
+    }
+}
+
+public enum State { Undecided, X, O };
+
+public class Position {
+    public int Row {get;}
+    public int Column {get;}
+
+    public Position(int Row, int Column) {
+        this.Row = Row;
+        this.Column = Column;
+    }
+}
+public class Board {
+    public int nRows = 3;
+    public int nCols = 3;
+    public State[,] boardstate = { 
+        {State.Undecided, State.Undecided, State.Undecided}, 
+        {State.Undecided, State.Undecided, State.Undecided},
+        {State.Undecided, State.Undecided, State.Undecided} 
+    };
+
+    void Place(State state, Position position) {
+        if (IsValidPlacement(state, position)) {
+            Console.WriteLine(position.Row);
+            Console.WriteLine(position.Column);
+        }
+    }
+
+    private bool IsValidPlacement(State state, Position position) {
+        return true;
+    }
+
+
+}
+
+public class Player {
+    public Position GetPosition(Board currentState) {
+        int Row = -1;
+        while (Row < 1 || Row > 3) {
+            Console.WriteLine("Enter a row (1-3):");
+            Row = Convert.ToInt32(Console.ReadLine());
+        }
+        int Column = -1;
+        while (Column < 1 || Column > 3) {
+            Console.WriteLine("Enter a column (1-3):");
+            Column = Convert.ToInt32(Console.ReadLine());
+        }
+
+        return new Position(Row, Column);
+    }
+}
+
+public class WinChecker {
+    public State Check(Board currentState) {
+        State state = State.O;
+        return state;
+    }
+}
+
+public class Renderer {
+    public void Render(Board board) {
+        for (int i=0; i < 3; i++) {
+            for (int j=0; j < 3; j++) {
+                Console.Write(board.boardstate[i,j]);
+                Console.Write(" ");
+            }
+            Console.WriteLine();
+        }
     }
 }
