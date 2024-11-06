@@ -2,6 +2,7 @@ using System;
 using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Microsoft.Extensions.FileSystemGlobbing.Internal.PathSegments;
 class GlazerCalc
 {
     enum Months { January=1, February=2, March=3, April=4, May=5, June=6, July=7, August=8, September=9, October=10, November=11, December=12 };
@@ -154,9 +155,24 @@ class GlazerCalc
         Player playerO = new Player();
         Board board = new Board();
         Renderer renderer = new Renderer();
-        renderer.Render(board);
+        State CurrentPlayer = State.X;
 
-        Position pos = playerX.GetPosition(board);
+        renderer.Render(board);
+        int turn = 0;
+        while (turn < 5) {
+
+            if (CurrentPlayer == State.X) {
+                CurrentPlayer = State.O;
+            }
+            else {
+                CurrentPlayer = State.X;
+            }
+
+            Position pos = playerX.GetPosition(board);
+            board.Place(CurrentPlayer, pos);
+            renderer.Render(board);
+            turn++;
+        }
 
 
         
@@ -283,10 +299,9 @@ public class Board {
         {State.Undecided, State.Undecided, State.Undecided} 
     };
 
-    void Place(State state, Position position) {
+    public void Place(State state, Position position) {
         if (IsValidPlacement(state, position)) {
-            Console.WriteLine(position.Row);
-            Console.WriteLine(position.Column);
+            this.boardstate[position.Row, position.Column] = state;
         }
     }
 
@@ -310,7 +325,7 @@ public class Player {
             Column = Convert.ToInt32(Console.ReadLine());
         }
 
-        return new Position(Row, Column);
+        return new Position(Row-1, Column-1);
     }
 }
 
@@ -325,10 +340,27 @@ public class Renderer {
     public void Render(Board board) {
         for (int i=0; i < 3; i++) {
             for (int j=0; j < 3; j++) {
-                Console.Write(board.boardstate[i,j]);
-                Console.Write(" ");
+                String pieceStr;
+                State cur = board.boardstate[i, j];
+                if (cur == State.Undecided) {
+                    pieceStr = " ";
+                }
+                else if (cur == State.X) {
+                    pieceStr = "X";
+                }
+                else {
+                    pieceStr = "O";
+                }
+
+                Console.Write($" {pieceStr} ");
+                if (j < 2) {
+                    Console.Write("|");
+                }
             }
-            Console.WriteLine();
+            if (i < 2) {
+                Console.WriteLine("\n---+---+---");
+            }
         }
+        Console.WriteLine();
     }
 }
