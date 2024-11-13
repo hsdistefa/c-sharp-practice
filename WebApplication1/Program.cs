@@ -156,23 +156,21 @@ class GlazerCalc
         Player playerO = new Player();
         Board board = new Board();
         Renderer renderer = new Renderer();
-        State CurrentPlayer = State.X;
+        WinChecker winChecker = new WinChecker();
 
         renderer.Render(board);
-        int turn = 0;
-        while (turn < 5) {
-
-            if (CurrentPlayer == State.X) {
-                CurrentPlayer = State.O;
+        while (!winChecker.Check(board)) {
+            State currentPlayer = board.GetCurrentPlayer();
+            Position pos;
+            if (currentPlayer == State.X) {
+                pos = playerX.GetPosition(board);
             }
             else {
-                CurrentPlayer = State.X;
+                pos = playerO.GetPosition(board);
             }
-
-            Position pos = playerX.GetPosition(board);
-            board.Place(CurrentPlayer, pos);
+            board.Place(currentPlayer, pos);
             renderer.Render(board);
-            turn++;
+            board.SwitchPlayer();
         }
 
 
@@ -309,8 +307,13 @@ public class Board {
     public State GetCurrentPlayer() {
         return this.CurrentPlayer;
     }
-    public void SetCurrentPlayer(State player) {
-        this.CurrentPlayer = player;
+    public void SwitchPlayer() {
+        if (this.CurrentPlayer == State.X) {
+            this.CurrentPlayer = State.O;
+        }
+        else {
+            this.CurrentPlayer = State.X;
+        }
     }
 
 
@@ -322,6 +325,7 @@ public class Player {
         int row;
         int column;
         do {
+            Console.WriteLine($"{currentBoard.GetCurrentPlayer()}'s turn:");
             Console.WriteLine("Enter a row (1-3):");
             row = Convert.ToInt32(Console.ReadLine());
 
@@ -350,9 +354,92 @@ public class Player {
 }
 
 public class WinChecker {
-    public State Check(Board currentState) {
-        State state = State.O;
-        return state;
+    public bool Check(Board board) {
+        State player = board.GetCurrentPlayer();
+        for (int i=0; i < board.nRows; i++) {
+            if (RowWin(i, board)) {
+                return true;
+            }
+            // Assumes square board
+            else if (ColWin(i, board)) {
+                return true;
+            }
+        }
+        if (DiagWinULtoLR(board) || DiagWinURtoLL(board)) {
+            return true;
+        }
+
+        if (IsDraw(board)) {
+            return true;
+        }
+
+        return false;
+    }
+    public bool IsDraw(Board board) {
+        for (int i=0; i < board.nRows; i++) {
+            for (int j=0; j < board.nCols; j++) {
+                if (board.boardstate[i, j] == State.Undecided) {
+                    return false;
+                }
+            }
+        }
+        Console.WriteLine("Draw!");
+        return true;
+    }
+
+    private bool RowWin(int row, Board board) {
+        State currState = board.boardstate[row, 0];
+        if (currState == State.Undecided) {
+            return false;
+        }
+        for (int j=1; j < board.nCols; j++) {
+            if (board.boardstate[row, j] != currState) {
+                return false;
+            }
+        }
+        Console.WriteLine($"{currState} Wins!");
+        return true;
+    }
+
+    private bool ColWin(int col, Board board) {
+        State currState = board.boardstate[0, col];
+        if (currState == State.Undecided) {
+            return false;
+        }
+        for (int i=1; i < board.nCols; i++) {
+            if (board.boardstate[i, col] != currState) {
+                return false;
+            }
+        }
+        Console.WriteLine($"{currState} Wins!");
+        return true;
+    }
+    private bool DiagWinULtoLR(Board board) {
+        State currState = board.boardstate[0, 0];
+        if (currState == State.Undecided) {
+            return false;
+        }
+        for (int i=0; i < board.nRows; i++) {
+            if (board.boardstate[i, i] != currState) {
+                return false;
+            }    
+        }
+        Console.WriteLine($"{currState} Wins!");
+        return true;
+    }
+    private bool DiagWinURtoLL(Board board) {
+        State currState = board.boardstate[0, board.nCols - 1];
+        if (currState == State.Undecided) {
+            return false;
+        }
+        for (int i=board.nRows-1; i >= 0; i--) {
+            Console.WriteLine(i);
+            if (board.boardstate[board.nRows-i-1, i] != currState) {
+                return false;
+            }    
+        }
+        Console.WriteLine($"{currState} Wins!");
+        return true;
     }
 }
 
