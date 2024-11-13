@@ -1,4 +1,5 @@
 using System;
+using System.Data;
 using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -293,6 +294,8 @@ public class Position {
 public class Board {
     public int nRows = 3;
     public int nCols = 3;
+
+    public State CurrentPlayer = State.X;
     public State[,] boardstate = { 
         {State.Undecided, State.Undecided, State.Undecided}, 
         {State.Undecided, State.Undecided, State.Undecided},
@@ -300,32 +303,49 @@ public class Board {
     };
 
     public void Place(State state, Position position) {
-        if (IsValidPlacement(state, position)) {
-            this.boardstate[position.Row, position.Column] = state;
-        }
+        this.boardstate[position.Row, position.Column] = state;
     }
 
-    private bool IsValidPlacement(State state, Position position) {
-        return true;
+    public State GetCurrentPlayer() {
+        return this.CurrentPlayer;
     }
+    public void SetCurrentPlayer(State player) {
+        this.CurrentPlayer = player;
+    }
+
 
 
 }
 
 public class Player {
-    public Position GetPosition(Board currentState) {
-        int Row = -1;
-        while (Row < 1 || Row > 3) {
+    public Position GetPosition(Board currentBoard) {
+        int row;
+        int column;
+        do {
             Console.WriteLine("Enter a row (1-3):");
-            Row = Convert.ToInt32(Console.ReadLine());
-        }
-        int Column = -1;
-        while (Column < 1 || Column > 3) {
-            Console.WriteLine("Enter a column (1-3):");
-            Column = Convert.ToInt32(Console.ReadLine());
-        }
+            row = Convert.ToInt32(Console.ReadLine());
 
-        return new Position(Row-1, Column-1);
+            Console.WriteLine("Enter a column (1-3):");
+            column = Convert.ToInt32(Console.ReadLine());
+        } while (!IsValidPlacement(currentBoard, row, column));
+
+        return new Position(row-1, column-1);
+    }
+
+    private bool IsValidPlacement(Board board, int row, int column) {
+        if (row < 1 || row > board.nRows) {
+            Console.WriteLine($"Invalid Row: {row}");
+            return false;
+        }
+        else if (column < 1 || column > board.nCols) {
+            Console.WriteLine($"Invalid Column: {column}");
+            return false;
+        }
+        else if (board.boardstate[row-1, column-1] != State.Undecided) {
+            Console.WriteLine($"Invalid Move: Cannot draw on an occupied square!");
+            return false;
+        }
+        return true;
     }
 }
 
@@ -340,7 +360,7 @@ public class Renderer {
     public void Render(Board board) {
         for (int i=0; i < 3; i++) {
             for (int j=0; j < 3; j++) {
-                String pieceStr;
+                string pieceStr;
                 State cur = board.boardstate[i, j];
                 if (cur == State.Undecided) {
                     pieceStr = " ";
